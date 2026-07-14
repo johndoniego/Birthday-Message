@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Surprise — Make Someone's Day Magic</title>
+  <meta name="description" content="Create a beautiful, animated birthday card with custom messages, media, and gifts. Share it as a link!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Courier+Prime&family=Fredoka:wght@400;600;700&family=Lobster&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-party">
+
+  <!-- Full-screen animation canvas (receiver mode) -->
+  <canvas id="animation-canvas"></canvas>
+
+  <!-- ============================================================ -->
+  <!-- CREATOR MODE                                                  -->
+  <!-- ============================================================ -->
+  <section id="creator-section" class="active">
+    <header class="creator-hero">
+      <div class="doodle doodle-star top-left">&#9733;</div>
+      <div class="doodle doodle-heart top-right">&#9829;</div>
+      <h1 class="hero-title">
+        <span class="hero-cake">&#127874;</span>
+        Birthday Surprise Maker
+      </h1>
+      <p class="hero-sub">Put together a one-of-a-kind animated birthday greeting &mdash; they&rsquo;ll only be able to open it on the big day!</p>
+    </header>
+
+    <div class="creator-layout">
+      <!-- LEFT: Form -->
+      <div class="card form-card">
+        <form id="birthday-form" autocomplete="off">
+
+          <!-- Name (required) -->
+          <div class="field">
+            <label for="input-name">
+              <span class="field-icon">&#127880;</span> Who&rsquo;s the birthday person?
+            </label>
+            <input type="text" id="input-name" placeholder="Their name" required>
+          </div>
+
+          <!-- Birthday Date (required) -->
+          <div class="field">
+            <label for="input-date">
+              <span class="field-icon">&#128197;</span> Their birthday date
+            </label>
+            <input type="date" id="input-date" required>
+            <p class="field-hint">The card will stay sealed until this date!</p>
+          </div>
+
+          <!-- Theme Picker -->
+          <div class="field">
+            <label><span class="field-icon">&#127912;</span> Pick a vibe</label>
+            <div class="theme-picker">
+              <label class="theme-chip active" data-theme="party">
+                <input type="radio" name="theme" value="party" checked>
+                <span class="chip-swatch swatch-party"></span>
+                Party Pop
+              </label>
+              <label class="theme-chip" data-theme="night">
+                <input type="radio" name="theme" value="night">
+                <span class="chip-swatch swatch-night"></span>
+                Dreamy Night
+              </label>
+              <label class="theme-chip" data-theme="garden">
+                <input type="radio" name="theme" value="garden">
+                <span class="chip-swatch swatch-garden"></span>
+                Garden Party
+              </label>
+              <label class="theme-chip" data-theme="groovy">
+                <input type="radio" name="theme" value="groovy">
+                <span class="chip-swatch swatch-groovy"></span>
+                Retro Groovy
+              </label>
+            </div>
+          </div>
+
+          <!-- Animation Picker -->
+          <div class="field">
+            <label for="select-animation"><span class="field-icon">&#10024;</span> Reveal animation</label>
+            <div class="animation-picker" id="animation-picker">
+              <label class="anim-chip active" data-anim="confetti">
+                <input type="radio" name="animation" value="confetti" checked>
+                <span class="anim-emoji">&#127881;</span>
+                Confetti
+              </label>
+              <label class="anim-chip" data-anim="balloons">
+                <input type="radio" name="animation" value="balloons">
+                <span class="anim-emoji">&#127880;</span>
+                Balloons
+              </label>
+              <label class="anim-chip" data-anim="sparkles">
+                <input type="radio" name="animation" value="sparkles">
+                <span class="anim-emoji">&#10024;</span>
+                Sparkles
+              </label>
+              <label class="anim-chip" data-anim="hearts">
+                <input type="radio" name="animation" value="hearts">
+                <span class="anim-emoji">&#128150;</span>
+                Hearts
+              </label>
+              <label class="anim-chip" data-anim="fireworks">
+                <input type="radio" name="animation" value="fireworks">
+                <span class="anim-emoji">&#127878;</span>
+                Fireworks
+              </label>
+              <label class="anim-chip" data-anim="pixel">
+                <input type="radio" name="animation" value="pixel">
+                <span class="anim-emoji">&#128126;</span>
+                Pixel Pop
+              </label>
+              <label class="anim-chip" data-anim="ribbon">
+                <input type="radio" name="animation" value="ribbon">
+                <span class="anim-emoji">&#127895;&#65039;</span>
+                Ribbons
+              </label>
+              <label class="anim-chip" data-anim="curtains">
+                <input type="radio" name="animation" value="curtains">
+                <span class="anim-emoji">&#127917;</span>
+                Curtains
+              </label>
+              <label class="anim-chip" data-anim="spacewarp">
+                <input type="radio" name="animation" value="spacewarp">
+                <span class="anim-emoji">&#128640;</span>
+                Space Warp
+              </label>
+              <label class="anim-chip" data-anim="gate">
+                <input type="radio" name="animation" value="gate">
+                <span class="anim-emoji">&#9961;&#65039;</span>
+                Gates
+              </label>
+            </div>
+          </div>
+
+          <!-- Rich Text Editor -->
+          <div class="field">
+            <label><span class="field-icon">&#9997;&#65039;</span> Write your message</label>
+            <div class="editor-wrap">
+              <div class="editor-toolbar">
+                <select id="font-family" title="Font">
+                  <option value="Poppins">Poppins</option>
+                  <option value="Fredoka">Fredoka</option>
+                  <option value="Caveat">Caveat</option>
+                  <option value="Playfair Display">Playfair</option>
+                  <option value="Lobster">Lobster</option>
+                  <option value="Courier Prime">Typewriter</option>
+                </select>
+                <select id="font-size" title="Size">
+                  <option value="3">Small</option>
+                  <option value="4" selected>Medium</option>
+                  <option value="5">Large</option>
+                  <option value="6">X-Large</option>
+                </select>
+                <div class="toolbar-sep"></div>
+                <button type="button" class="tb-btn" data-cmd="bold" title="Bold"><i class="fa-solid fa-bold"></i></button>
+                <button type="button" class="tb-btn" data-cmd="italic" title="Italic"><i class="fa-solid fa-italic"></i></button>
+                <button type="button" class="tb-btn" data-cmd="underline" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                <button type="button" class="tb-btn" data-cmd="strikeThrough" title="Strikethrough"><i class="fa-solid fa-strikethrough"></i></button>
+                <div class="toolbar-sep"></div>
+                <input type="color" id="text-color" value="#333333" title="Text Color" class="tb-color">
+                <div class="toolbar-sep"></div>
+                <button type="button" class="tb-btn" data-cmd="justifyLeft" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
+                <button type="button" class="tb-btn" data-cmd="justifyCenter" title="Center"><i class="fa-solid fa-align-center"></i></button>
+                <button type="button" class="tb-btn" data-cmd="justifyRight" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+                <div class="toolbar-sep"></div>
+                <select id="wordart-picker" title="WordArt Style">
+                  <option value="none">No WordArt</option>
+                  <option value="rainbow">&#127752; Rainbow</option>
+                  <option value="shadow-pop">&#128165; Shadow Pop</option>
+                  <option value="glow">&#128171; Neon Glow</option>
+                  <option value="outline">&#9999;&#65039; Outline</option>
+                  <option value="wavy">&#127754; Wavy</option>
+                  <option value="retro3d">&#127918; Retro 3D</option>
+                </select>
+              </div>
+              <div id="message-editor" class="editor-area" contenteditable="true" data-placeholder="Type your heartfelt birthday message here..."></div>
+            </div>
+          </div>
+
+          <!-- Media (optional) -->
+          <div class="field">
+            <label><span class="field-icon">&#128247;</span> Attach media <span class="optional-tag">optional</span></label>
+            <div class="media-tabs">
+              <button type="button" class="mtab active" data-tab="tab-image"><i class="fa-solid fa-image"></i> Image</button>
+              <button type="button" class="mtab" data-tab="tab-video"><i class="fa-solid fa-video"></i> Video</button>
+              <button type="button" class="mtab" data-tab="tab-audio"><i class="fa-solid fa-music"></i> Audio</button>
+            </div>
+            <div class="media-panes">
+              <div id="tab-image" class="mpane active">
+                <input type="url" id="image-url" placeholder="Paste an image URL (Imgur, Unsplash, etc.)">
+                <div class="upload-divider"><span>or</span></div>
+                <div class="file-upload-box">
+                  <input type="file" id="image-file" accept="image/*" class="file-input">
+                  <label for="image-file" class="file-label"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Image</label>
+                  <span class="file-name-display" id="image-file-name">No image selected</span>
+                </div>
+              </div>
+              <div id="tab-video" class="mpane">
+                <input type="url" id="video-url" placeholder="YouTube link or direct video URL">
+                <div class="upload-divider"><span>or</span></div>
+                <div class="file-upload-box">
+                  <input type="file" id="video-file" accept="video/*" class="file-input">
+                  <label for="video-file" class="file-label"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Video</label>
+                  <span class="file-name-display" id="video-file-name">No video selected</span>
+                </div>
+              </div>
+              <div id="tab-audio" class="mpane">
+                <input type="url" id="audio-url" placeholder="Direct MP3 link for background music">
+                <div class="upload-divider"><span>or</span></div>
+                <div class="file-upload-box">
+                  <input type="file" id="audio-file" accept="audio/*" class="file-input">
+                  <label for="audio-file" class="file-label"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Audio</label>
+                  <span class="file-name-display" id="audio-file-name">No audio selected</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gift Links (optional) -->
+          <div class="field">
+            <label><span class="field-icon">&#127873;</span> Virtual gifts <span class="optional-tag">optional</span></label>
+            <div id="gifts-list"></div>
+            <button type="button" id="add-gift-btn" class="btn btn-dashed"><i class="fa-solid fa-plus"></i> Add a gift link</button>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-big">
+            <i class="fa-solid fa-paper-plane"></i> Create &amp; Get Shareable Link
+          </button>
+        </form>
+      </div>
+
+      <!-- RIGHT: Live Preview -->
+      <div class="preview-col">
+        <div class="card preview-card">
+          <div class="preview-top-bar">
+            <span class="preview-badge"><i class="fa-solid fa-eye"></i> Live Preview</span>
+            <button type="button" id="preview-anim-btn" class="btn btn-small"><i class="fa-solid fa-play"></i> Preview Animation</button>
+          </div>
+          <div class="preview-frame" id="preview-frame">
+            <canvas id="preview-canvas"></canvas>
+            <div class="preview-inner" id="preview-inner">
+              <div class="prev-age-badge" id="prev-age"></div>
+              <h2 class="prev-name" id="prev-name">Happy Birthday!</h2>
+              <div class="prev-message" id="prev-message">
+                <p style="color:#999;font-style:italic;">Your message will appear here&hellip;</p>
+              </div>
+              <div class="prev-media" id="prev-media"></div>
+              <div class="prev-gifts" id="prev-gifts"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- RECEIVER MODE                                                 -->
+  <!-- ============================================================ -->
+  <section id="receiver-section">
+
+    <!-- Date-Lock Countdown Screen -->
+    <div id="date-lock-screen" class="date-lock-screen hidden">
+      <div class="lock-content">
+        <div class="sealed-envelope">
+          <div class="envelope-body"></div>
+          <div class="envelope-flap"></div>
+          <div class="envelope-seal">&#128274;</div>
+        </div>
+        <h1 class="lock-title">This surprise isn&rsquo;t ready yet!</h1>
+        <p class="lock-sub" id="lock-sub-text">Come back on the big day to open it.</p>
+        <div class="countdown-row" id="countdown-row">
+          <div class="cd-unit"><span class="cd-num" id="cd-days">0</span><span class="cd-label">days</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cd-hours">0</span><span class="cd-label">hours</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cd-mins">0</span><span class="cd-label">mins</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cd-secs">0</span><span class="cd-label">secs</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unwrap Overlay -->
+    <div id="unwrap-overlay" class="unwrap-overlay hidden">
+      <div class="unwrap-center">
+        <!-- Default Gift Box -->
+        <div id="uw-box" class="uw-element">
+          <div class="gift-box">
+            <div class="gbox-bow"></div>
+            <div class="gbox-lid"><div class="gbox-lid-ribbon"></div></div>
+            <div class="gbox-base"><div class="gbox-ribbon-v"></div></div>
+          </div>
+          <p class="uw-tap-text">A surprise is waiting for you&hellip;<br><strong>Tap to unwrap!</strong></p>
+        </div>
+        <!-- Curtains -->
+        <div id="uw-curtains" class="uw-element hidden">
+          <div class="curtain c-left"></div>
+          <div class="curtain c-right"></div>
+          <button id="uw-curtain-btn" class="uw-action-btn">&#127917; Draw the Curtains</button>
+        </div>
+        <!-- Gates -->
+        <div id="uw-gates" class="uw-element hidden">
+          <div class="gate g-left"><span>&#9733;</span></div>
+          <div class="gate g-right"><span>&#9733;</span></div>
+          <button id="uw-gate-btn" class="uw-action-btn">&#9961;&#65039; Open the Gates</button>
+        </div>
+        <!-- Space Warp Portal -->
+        <div id="uw-warp" class="uw-element hidden">
+          <div class="warp-ring"></div>
+          <button id="uw-warp-btn" class="uw-action-btn">&#128640; Enter the Portal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Birthday Card -->
+    <div id="receiver-card" class="card receiver-card hidden">
+      <div class="rc-header">
+        <div class="rc-age-badge hidden" id="rc-age"></div>
+        <h1 class="rc-name" id="rc-name"></h1>
+      </div>
+      <div class="rc-body">
+        <div class="rc-message" id="rc-message"></div>
+        <div class="rc-media hidden" id="rc-media"></div>
+        <div class="rc-gifts hidden" id="rc-gifts">
+          <h3 class="rc-gifts-title"><i class="fa-solid fa-gift"></i> Your Virtual Gifts</h3>
+          <div class="rc-gifts-grid" id="rc-gifts-grid"></div>
+        </div>
+      </div>
+      <div class="rc-footer">
+        <button id="replay-btn" class="btn btn-small"><i class="fa-solid fa-rotate-left"></i> Replay</button>
+        <a href="index.html" class="btn btn-primary btn-small"><i class="fa-solid fa-pen"></i> Make Your Own</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SHARE LINK MODAL                                              -->
+  <!-- ============================================================ -->
+  <div id="link-modal" class="modal-backdrop hidden">
+    <div class="card modal-card">
+      <div class="modal-icon">&#127881;</div>
+      <h2>Your surprise link is ready!</h2>
+      <p>Copy this link and send it to them. They won&rsquo;t be able to peek — it only opens on their birthday.</p>
+      <div class="link-copy-row">
+        <input type="text" id="share-link" readonly>
+        <button id="copy-btn" class="btn btn-primary"><i class="fa-solid fa-copy"></i> Copy</button>
+      </div>
+      <p class="link-warning-text hidden" id="link-size-warning" style="font-size: 0.8rem; color: #e8751a; margin-top: 8px; font-weight: 500; text-align: left; background: #fff5e8; border: 1px solid #ead5b8; padding: 10px; border-radius: 8px;"><i class="fa-solid fa-circle-exclamation"></i> <strong>Note:</strong> The link is quite long because of the uploaded media. It will work perfectly when opened, but some messaging apps might have trouble auto-linking it. You can shorten it using a free link shortener if needed!</p>
+      <button id="close-modal-btn" class="btn btn-ghost" style="margin-top: 10px;">Close</button>
+    </div>
+  </div>
+
+  <audio id="bg-music" loop></audio>
+  <script src="app.js"></script>
+</body>
+</html>

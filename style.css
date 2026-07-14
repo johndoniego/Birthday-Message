@@ -1,0 +1,1661 @@
+/* ============================================================
+   Birthday Surprise Maker — style.css
+   Warm · Handcrafted · Playful
+   ============================================================ */
+
+/* ─────────────────────────────────────────────
+   1. CSS VARIABLES PER THEME
+   ───────────────────────────────────────────── */
+
+.theme-party {
+  --bg: #FFF8F0;
+  --card-bg: #FFFFFF;
+  --accent: #FF6B6B;
+  --accent2: #FFD93D;
+  --accent3: #C9B1FF;
+  --text: #3D2C2C;
+  --text-muted: #9E8A8A;
+  --border-color: #F0D9C6;
+  --shadow: 0 6px 24px rgba(255, 107, 107, 0.12);
+}
+
+.theme-night {
+  --bg: #1a1a2e;
+  --card-bg: #22223a;
+  --accent: #FFD700;
+  --accent2: #e0aaff;
+  --accent3: #7B2D8E;
+  --text: #f0e6ff;
+  --text-muted: #9e95b7;
+  --border-color: #3a3a5c;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+.theme-garden {
+  --bg: #FFFDF5;
+  --card-bg: #FFFFFF;
+  --accent: #95B88C;
+  --accent2: #F4ACB7;
+  --accent3: #FFFDD0;
+  --text: #3B4A3A;
+  --text-muted: #8DA388;
+  --border-color: #D5E3D0;
+  --shadow: 0 6px 24px rgba(149, 184, 140, 0.14);
+}
+
+.theme-groovy {
+  --bg: #FFF5E8;
+  --card-bg: #FFFDF8;
+  --accent: #E8751A;
+  --accent2: #F2C744;
+  --accent3: #7B2D8E;
+  --text: #3E2A14;
+  --text-muted: #A68A6B;
+  --border-color: #EAD5B8;
+  --shadow: 0 6px 24px rgba(232, 117, 26, 0.12);
+}
+
+/* ─────────────────────────────────────────────
+   2. GLOBAL RESET & BODY
+   ───────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg, #FFF8F0);
+  color: var(--text, #3D2C2C);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color 0.5s ease, color 0.5s ease;
+  /* subtle CSS noise texture */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
+#animation-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 99;
+}
+
+/* ─────────────────────────────────────────────
+   3. UTILITY CLASSES
+   ───────────────────────────────────────────── */
+
+.hidden {
+  display: none !important;
+}
+
+section.active,
+div.active {
+  display: block;
+}
+
+/* ─────────────────────────────────────────────
+   4. CREATOR SECTION
+   ───────────────────────────────────────────── */
+
+#creator-section {
+  display: none;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#creator-section.active {
+  display: block;
+}
+
+/* Hero */
+.creator-hero {
+  text-align: center;
+  padding: 48px 20px 36px;
+  position: relative;
+}
+
+.hero-title {
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.hero-sub {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.hero-cake {
+  display: inline-block;
+  font-size: 2.6rem;
+  animation: cake-bounce 2s ease-in-out infinite;
+}
+
+@keyframes cake-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+/* Doodle decorations */
+.doodle {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  font-size: 1.8rem;
+  opacity: 0.55;
+  animation: doodle-float 4s ease-in-out infinite alternate;
+}
+
+.doodle:nth-child(even) {
+  animation: doodle-spin 6s linear infinite;
+}
+
+@keyframes doodle-float {
+  0%   { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-14px) rotate(8deg); }
+}
+
+@keyframes doodle-spin {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.08); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Creator layout — grid */
+.creator-layout {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* ─────────────────────────────────────────────
+   5. CARD (SHARED BASE)
+   ───────────────────────────────────────────── */
+
+.card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: var(--shadow);
+  border: 2px dashed var(--border-color);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.4s ease;
+}
+
+/* Night theme override — solid subtle border */
+.theme-night .card {
+  border-style: solid;
+  border-color: var(--border-color);
+}
+
+/* ─────────────────────────────────────────────
+   6. FORM STYLING
+   ───────────────────────────────────────────── */
+
+.form-card {
+  /* left panel — inherits .card */
+}
+
+.field {
+  margin-bottom: 24px;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.field-icon {
+  display: inline;
+  margin-right: 6px;
+  font-style: normal;
+}
+
+.field-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 6px;
+}
+
+.optional-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="url"],
+select {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="url"]:focus,
+select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.10);
+}
+
+/* Night theme — dark input backgrounds */
+.theme-night input[type="text"],
+.theme-night input[type="date"],
+.theme-night input[type="url"],
+.theme-night select {
+  background: #1e1e3a;
+  color: #f0e6ff;
+  border-color: var(--border-color);
+}
+
+.theme-night input[type="text"]:focus,
+.theme-night input[type="date"]:focus,
+.theme-night input[type="url"]:focus,
+.theme-night select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.12);
+}
+
+/* ─────────────────────────────────────────────
+   7. THEME PICKER
+   ───────────────────────────────────────────── */
+
+.theme-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.theme-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  background: rgba(0, 0, 0, 0.03);
+  transition: all 0.25s ease;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.theme-chip:hover {
+  border-color: var(--border-color);
+}
+
+.theme-chip.active {
+  border-color: var(--accent);
+  background: rgba(255, 107, 107, 0.08);
+}
+
+.theme-night .theme-chip.active {
+  background: rgba(255, 215, 0, 0.10);
+}
+
+.theme-garden .theme-chip.active {
+  background: rgba(149, 184, 140, 0.10);
+}
+
+.theme-groovy .theme-chip.active {
+  background: rgba(232, 117, 26, 0.10);
+}
+
+.theme-chip input[type="radio"] {
+  display: none;
+}
+
+.chip-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-bottom: 6px;
+  border: 2px solid rgba(0, 0, 0, 0.06);
+}
+
+.swatch-party {
+  background: linear-gradient(135deg, #FF6B6B, #FFD93D);
+}
+
+.swatch-night {
+  background: linear-gradient(135deg, #1a1a2e, #FFD700);
+}
+
+.swatch-garden {
+  background: linear-gradient(135deg, #95B88C, #F4ACB7);
+}
+
+.swatch-groovy {
+  background: linear-gradient(135deg, #E8751A, #7B2D8E);
+}
+
+/* ─────────────────────────────────────────────
+   8. ANIMATION PICKER
+   ───────────────────────────────────────────── */
+
+.animation-picker {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.anim-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 6px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: rgba(0, 0, 0, 0.03);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text);
+  transition: all 0.25s ease;
+  text-align: center;
+}
+
+.anim-chip:hover {
+  border-color: var(--border-color);
+}
+
+.anim-chip.active {
+  border-color: var(--accent);
+  background: rgba(255, 107, 107, 0.08);
+}
+
+.theme-night .anim-chip.active {
+  background: rgba(255, 215, 0, 0.08);
+}
+
+.theme-garden .anim-chip.active {
+  background: rgba(149, 184, 140, 0.08);
+}
+
+.theme-groovy .anim-chip.active {
+  background: rgba(232, 117, 26, 0.08);
+}
+
+.anim-chip input[type="radio"] {
+  display: none;
+}
+
+.anim-emoji {
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   9. RICH TEXT EDITOR
+   ───────────────────────────────────────────── */
+
+.editor-wrap {
+  border: 3px solid var(--border-color);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.03), 0 4px 10px rgba(0,0,0,0.02);
+  background: var(--card-bg);
+}
+
+.editor-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb, 255, 107, 107), 0.15), 0 4px 12px rgba(0,0,0,0.04);
+  transform: translateY(-1px);
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 3px solid var(--border-color);
+}
+
+.editor-toolbar select {
+  width: auto;
+  padding: 6px 28px 6px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  font-size: 0.85rem;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text);
+  background: var(--card-bg) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center;
+  background-size: 14px;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.editor-toolbar select:hover {
+  border-color: var(--accent);
+  background-color: rgba(var(--accent-rgb, 255, 107, 107), 0.05);
+}
+
+.toolbar-sep {
+  width: 2px;
+  height: 24px;
+  background: var(--border-color);
+  margin: 0 6px;
+  flex-shrink: 0;
+  border-radius: 1px;
+}
+
+.tb-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--text);
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.tb-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--accent);
+  border-color: var(--border-color);
+  transform: scale(1.05);
+}
+
+.tb-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.tb-color {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  background: none;
+  transition: transform 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.tb-color:hover {
+  transform: scale(1.1);
+  border-color: var(--accent);
+}
+
+#wordart-picker {
+  width: auto;
+  font-weight: 600;
+}
+
+.editor-area {
+  min-height: 180px;
+  padding: 20px;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text);
+  background: var(--card-bg);
+  background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 100% 1.8em;
+  transition: background-color 0.3s;
+}
+
+.editor-area:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-style: italic;
+}
+
+/* File Upload Attachment Styles */
+.upload-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 12px 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.upload-divider::before,
+.upload-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 2px dashed var(--border-color);
+}
+
+.upload-divider span {
+  padding: 0 10px;
+}
+
+.file-upload-box {
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.01);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-upload-box:hover {
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb, 255, 107, 107), 0.02);
+}
+
+.file-input {
+  display: none !important;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  margin: 0;
+}
+
+.file-label:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+}
+
+.file-label:active {
+  transform: translateY(0);
+}
+
+.file-name-display {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Night theme — editor overrides */
+.theme-night .editor-toolbar {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.theme-night .editor-area {
+  background-color: #22223a;
+  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+}
+
+/* ─────────────────────────────────────────────
+   10. WORDART CSS CLASSES
+   ───────────────────────────────────────────── */
+
+.wordart-rainbow {
+  background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0088);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: rainbow-shift 3s linear infinite;
+}
+
+@keyframes rainbow-shift {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.wordart-shadow-pop {
+  text-shadow: 3px 3px 0 var(--accent), 6px 6px 0 var(--accent2);
+}
+
+.wordart-glow {
+  text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent), 0 0 40px var(--accent2);
+}
+
+.wordart-outline {
+  -webkit-text-stroke: 2px var(--accent);
+  -webkit-text-fill-color: transparent;
+}
+
+.wordart-wavy {
+  animation: wavy-text 2s ease-in-out infinite;
+}
+
+@keyframes wavy-text {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+.wordart-retro3d {
+  text-shadow:
+    1px 1px 0 var(--accent),
+    2px 2px 0 var(--accent),
+    3px 3px 0 var(--accent),
+    4px 4px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* ─────────────────────────────────────────────
+   11. MEDIA TABS
+   ───────────────────────────────────────────── */
+
+.media-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 12px;
+}
+
+.mtab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.mtab:hover {
+  color: var(--text);
+}
+
+.mtab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.mpane {
+  display: none;
+}
+
+.mpane.active {
+  display: block;
+}
+
+/* ─────────────────────────────────────────────
+   12. GIFT CARDS (CREATOR)
+   ───────────────────────────────────────────── */
+
+.gift-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 10px;
+  border: 1px dashed var(--border-color);
+}
+
+.gift-row input {
+  flex: 1;
+}
+
+.gift-remove-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 107, 107, 0.13);
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.gift-remove-btn:hover {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+/* ─────────────────────────────────────────────
+   13. BUTTONS
+   ───────────────────────────────────────────── */
+
+.btn {
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  font-weight: 600;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  text-decoration: none;
+  line-height: 1.3;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.30);
+}
+
+.theme-night .btn-primary {
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.25);
+}
+
+.theme-garden .btn-primary {
+  box-shadow: 0 4px 15px rgba(149, 184, 140, 0.30);
+}
+
+.theme-groovy .btn-primary {
+  box-shadow: 0 4px 15px rgba(232, 117, 26, 0.30);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.40);
+}
+
+.theme-night .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.35);
+}
+
+.theme-garden .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(149, 184, 140, 0.40);
+}
+
+.theme-groovy .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(232, 117, 26, 0.40);
+}
+
+.btn-dashed {
+  background: transparent;
+  border: 2px dashed var(--accent);
+  color: var(--accent);
+}
+
+.btn-dashed:hover {
+  background: rgba(255, 107, 107, 0.06);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.btn-big {
+  width: 100%;
+  justify-content: center;
+  padding: 16px;
+  font-size: 1.1rem;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+}
+
+/* ─────────────────────────────────────────────
+   14. PREVIEW PANEL
+   ───────────────────────────────────────────── */
+
+.preview-col {
+  position: sticky;
+  top: 30px;
+}
+
+.preview-card {
+  padding: 16px;
+}
+
+.preview-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.preview-badge {
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.preview-frame {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  height: 520px;
+  border: 2px solid var(--border-color);
+  background: var(--bg);
+}
+
+#preview-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.preview-inner {
+  position: relative;
+  z-index: 1;
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+}
+
+.prev-name {
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.prev-age-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.prev-message {
+  text-align: left;
+  width: 100%;
+  line-height: 1.7;
+  font-size: 0.92rem;
+}
+
+.prev-media img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.prev-gifts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────────
+   15. RECEIVER SECTION
+   ───────────────────────────────────────────── */
+
+#receiver-section {
+  display: none;
+  min-height: 100vh;
+}
+
+#receiver-section.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────────
+   16. DATE-LOCK SCREEN
+   ───────────────────────────────────────────── */
+
+.date-lock-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  text-align: center;
+}
+
+.lock-content {
+  max-width: 450px;
+  padding: 40px;
+}
+
+/* Sealed envelope */
+.sealed-envelope {
+  position: relative;
+  width: 160px;
+  height: 110px;
+  margin: 0 auto 30px;
+}
+
+.envelope-body {
+  width: 100%;
+  height: 70%;
+  background: var(--accent);
+  border-radius: 0 0 8px 8px;
+  position: absolute;
+  bottom: 0;
+}
+
+.envelope-flap {
+  width: 0;
+  height: 0;
+  border-left: 80px solid transparent;
+  border-right: 80px solid transparent;
+  border-top: 60px solid var(--accent2);
+  position: absolute;
+  top: 0;
+  filter: brightness(0.85);
+}
+
+.envelope-seal {
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  z-index: 2;
+}
+
+.lock-title {
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.lock-sub {
+  color: var(--text-muted);
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.countdown-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.cd-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cd-num {
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.cd-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   17. UNWRAP OVERLAY
+   ───────────────────────────────────────────── */
+
+.unwrap-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1s ease;
+}
+
+.unwrap-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.unwrap-center {
+  text-align: center;
+}
+
+/* --- Gift Box --- */
+.gift-box {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 24px;
+  cursor: pointer;
+  animation: box-shake 1.5s infinite ease-in-out;
+}
+
+.gbox-base {
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.gbox-ribbon-v {
+  position: absolute;
+  width: 20px;
+  height: 100%;
+  background: var(--accent2);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.gbox-lid {
+  position: absolute;
+  width: 156px;
+  height: 36px;
+  background: var(--accent);
+  left: -8px;
+  top: -8px;
+  border-radius: 6px;
+  z-index: 2;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.6s ease;
+}
+
+.gbox-lid-ribbon {
+  position: absolute;
+  width: 100%;
+  height: 18px;
+  background: var(--accent2);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.gbox-bow {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: var(--accent2);
+  border-radius: 50%;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  z-index: 3;
+}
+
+@keyframes box-shake {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-6deg); }
+  75%      { transform: rotate(6deg); }
+}
+
+.gift-box.opened {
+  animation: none;
+}
+
+.gift-box.opened .gbox-lid {
+  transform: translateY(-130px) rotate(-20deg);
+  opacity: 0;
+}
+
+/* --- Curtains --- */
+.curtain {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.c-left {
+  left: 0;
+  background: linear-gradient(to right, #8B0000, #C41E3A, #8B0000);
+}
+
+.c-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.04) 4px,
+    transparent 4px,
+    transparent 20px
+  );
+}
+
+.c-right {
+  right: 0;
+  background: linear-gradient(to left, #8B0000, #C41E3A, #8B0000);
+}
+
+.c-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.04) 4px,
+    transparent 4px,
+    transparent 20px
+  );
+}
+
+#uw-curtains {
+  position: fixed;
+  inset: 0;
+}
+
+.uw-curtains.opened .c-left {
+  transform: translateX(-100%);
+}
+
+.uw-curtains.opened .c-right {
+  transform: translateX(100%);
+}
+
+/* --- Gates --- */
+#uw-gates {
+  position: fixed;
+  inset: 0;
+  display: flex;
+}
+
+.gate {
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+  border: 3px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.g-left {
+  border-right-width: 1px;
+}
+
+.g-right {
+  border-left-width: 1px;
+}
+
+.gate span {
+  font-size: 4rem;
+  opacity: 0.3;
+}
+
+.uw-gates.opened .g-left {
+  transform: translateX(-100%);
+}
+
+.uw-gates.opened .g-right {
+  transform: translateX(100%);
+}
+
+/* --- Space Warp --- */
+#uw-warp {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.warp-ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 4px solid var(--accent);
+  box-shadow: 0 0 40px var(--accent), 0 0 80px var(--accent2);
+  animation: warp-spin 3s linear infinite;
+}
+
+@keyframes warp-spin {
+  to {
+    transform: rotate(360deg) scale(1.1);
+  }
+}
+
+.warp-ring.zoomed {
+  animation: warp-zoom 0.8s forwards;
+}
+
+@keyframes warp-zoom {
+  to {
+    transform: scale(15);
+    opacity: 0;
+  }
+}
+
+/* --- Action Button --- */
+.uw-action-btn {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 36px;
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--accent);
+  color: #fff;
+  border: 3px solid #fff;
+  border-radius: 40px;
+  cursor: pointer;
+  z-index: 160;
+  animation: pulse-btn 2s infinite;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+}
+
+@keyframes pulse-btn {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.06); }
+}
+
+.uw-tap-text {
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.uw-tap-text strong {
+  color: var(--accent);
+}
+
+/* ─────────────────────────────────────────────
+   18. RECEIVER CARD
+   ───────────────────────────────────────────── */
+
+.receiver-card {
+  max-width: 650px;
+  width: 90%;
+  margin: 40px auto;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.receiver-card.reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rc-age-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.rc-name {
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.rc-message {
+  text-align: left;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 14px;
+  border: 1px dashed var(--border-color);
+  margin-bottom: 24px;
+  line-height: 1.8;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.rc-media {
+  margin-bottom: 24px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+}
+
+.rc-media img,
+.rc-media video {
+  width: 100%;
+  display: block;
+}
+
+.rc-media iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+}
+
+.rc-gifts-title {
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.rc-gifts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.rc-gift-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  border-radius: 14px;
+  border: 2px dashed var(--border-color);
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.rc-gift-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.rc-gift-card .gift-emoji {
+  font-size: 2rem;
+}
+
+.rc-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────────
+   19. MODAL
+   ───────────────────────────────────────────── */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.modal-card {
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.modal-card h2 {
+  font-family: 'Fredoka', 'Bubblegum Sans', cursive, sans-serif;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.modal-card p {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.link-copy-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.link-copy-row input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+/* ─────────────────────────────────────────────
+   20. BALLOON DOM ELEMENTS
+   ───────────────────────────────────────────── */
+
+.balloon-dom {
+  position: fixed;
+  bottom: -120px;
+  z-index: 98;
+  width: 50px;
+  height: 65px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  animation: float-up var(--dur, 6s) linear forwards;
+}
+
+.balloon-dom::after {
+  content: '';
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  width: 1px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-55vh) translateX(var(--drift, 30px));
+  }
+  100% {
+    transform: translateY(-120vh) translateX(0);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   21. RESPONSIVE
+   ───────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .creator-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-col {
+    position: static;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+  }
+
+  .card {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 500px) {
+  .animation-picker {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .rc-name {
+    font-size: 1.8rem;
+  }
+
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .card {
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  .creator-hero {
+    padding: 30px 14px 24px;
+  }
+
+  #creator-section {
+    padding: 12px;
+  }
+
+  .lock-content {
+    padding: 24px;
+  }
+
+  .lock-title {
+    font-size: 1.6rem;
+  }
+
+  .cd-num {
+    font-size: 2rem;
+  }
+
+  .countdown-row {
+    gap: 10px;
+  }
+
+  .rc-footer {
+    flex-direction: column;
+  }
+
+  .rc-message {
+    padding: 16px;
+    font-size: 0.95rem;
+  }
+
+  .receiver-card {
+    width: 95%;
+    margin: 24px auto;
+  }
+
+  .btn-big {
+    padding: 14px;
+    font-size: 1rem;
+  }
+
+  .preview-frame {
+    height: 420px;
+  }
+
+  .gift-box {
+    width: 110px;
+    height: 110px;
+  }
+
+  .gbox-lid {
+    width: 126px;
+  }
+}
