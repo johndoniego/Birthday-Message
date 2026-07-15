@@ -160,10 +160,12 @@ export default function ReceiverMode({ data }) {
   useEffect(() => {
     if (data.theme === 'custom') {
       const cardInk = getContrastColor(data.customCardBgColor || '#FFFFFF');
+      const btnText = getContrastColor(data.customAccentColor || '#FF6B6B');
       document.body.style.setProperty('--bg', data.customBgColor || '#FFF8F0');
       document.body.style.setProperty('--card-bg', data.customCardBgColor || '#FFFFFF');
       document.body.style.setProperty('--text', data.customTextColor || '#3D2C2C');
       document.body.style.setProperty('--accent', data.customAccentColor || '#FF6B6B');
+      document.body.style.setProperty('--btn-text-color', btnText);
       document.body.style.setProperty('--border-color', cardInk === '#3D2C2C' ? '#F0D9C6' : '#3a3a5c');
       document.body.style.setProperty('--shadow', `0 6px 24px ${data.customAccentColor || '#FF6B6B'}22`);
       document.body.className = 'theme-custom';
@@ -172,6 +174,7 @@ export default function ReceiverMode({ data }) {
       document.body.style.removeProperty('--card-bg');
       document.body.style.removeProperty('--text');
       document.body.style.removeProperty('--accent');
+      document.body.style.removeProperty('--btn-text-color');
       document.body.style.removeProperty('--border-color');
       document.body.style.removeProperty('--shadow');
       document.body.className = data.theme && data.theme !== 'party' ? `theme-${data.theme}` : '';

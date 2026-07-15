@@ -811,8 +811,8 @@ select:focus {
 }
 
 .btn-primary {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent) !important;
+  color: var(--btn-text-color, #ffffff) !important;
   box-shadow: 0 4px 15px rgba(255, 107, 107, 0.30);
 }
 
@@ -1925,4 +1925,474 @@ select:focus {
   color: #fff;
   border-radius: 4px;
   font-weight: bold;
+}
+
+
+/* Theme Vibe Selector capsule styles */
+.theme-picker {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-top: 10px !important;
+}
+
+.theme-chip {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 18px !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 2px solid transparent !important;
+  color: var(--text) !important;
+  transition: all 0.2s ease !important;
+}
+
+.theme-chip:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+  border-color: var(--border-color) !important;
+}
+
+.theme-chip.active {
+  background: #ffffff !important;
+  border-color: var(--accent) !important;
+  color: var(--text) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+}
+
+.theme-chip .chip-swatch {
+  display: none !important;
+}
+
+.theme-night .theme-chip {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #f0e6ff !important;
+}
+
+.theme-night .theme-chip:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.theme-night .theme-chip.active {
+  background: #22223a !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.theme-custom .theme-chip.active {
+  background: var(--card-bg) !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.envelope-wrapper {
+  perspective: 1000px;
+  width: 320px;
+  height: 220px;
+  margin: 0 auto;
+}
+
+.envelope-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.envelope-back {
+  position: absolute;
+  inset: 0;
+  background: var(--env-color, #ff6b6b);
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.envelope-letter {
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
+  right: 10px;
+  height: 180px;
+  background: #ffffff;
+  border-radius: 6px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+  padding: 16px;
+  border: 1.5px solid var(--text);
+}
+
+.envelope-letter.slide-up {
+  transform: translateY(-130px) translateZ(30px) scale(1.05);
+  z-index: 6;
+}
+
+.letter-paper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.letter-stamp {
+  font-size: 2rem;
+}
+
+.letter-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.letter-desc {
+  font-size: 0.72rem;
+  color: #666;
+}
+
+.letter-lines span {
+  display: block;
+  width: 100px;
+  height: 2px;
+  background: #eee;
+  margin: 4px auto;
+}
+
+.envelope-front {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.front-svg {
+  filter: drop-shadow(0 -1px 3px rgba(0,0,0,0.15));
+}
+
+.envelope-top-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 105px;
+  transform-origin: top center;
+  transition: transform 0.6s ease;
+  z-index: 4;
+}
+
+.envelope-top-flap.flap-open {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+.flap-svg {
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
+}
+
+/* Wax Seal Button */
+.wax-seal-btn {
+  position: absolute;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(10px) scale(1);
+  width: 54px;
+  height: 54px;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.wax-seal-btn:hover {
+  transform: translateX(-50%) translateZ(12px) scale(1.1);
+}
+
+.wax-seal-btn.broken {
+  animation: seal-break 0.5s ease forwards;
+  pointer-events: none;
+}
+
+.seal-outer {
+  width: 100%;
+  height: 100%;
+  background: var(--seal-color, #d63031);
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25), inset 0 0 6px rgba(0,0,0,0.3);
+  border: 2.5px solid var(--text);
+}
+
+.seal-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px dashed rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seal-emoji {
+  font-size: 1.5rem;
+}
+
+.seal-click-text {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-weight: 700;
+  border: 1px solid var(--text);
+}
+
+@keyframes seal-break {
+  0% { transform: translateX(-50%) translateZ(10px) scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: translateX(-50%) translateZ(15px) scale(1.1) rotate(-10deg); opacity: 0.8; }
+  100% { transform: translateX(-50%) translateZ(-20px) scale(0.6) rotate(45deg); opacity: 0; }
+}
+
+/* ============================================================
+   3D SCROLL UNWRAP ANIMATION
+   ============================================================ */
+.scroll-wrapper {
+  position: relative;
+  width: 320px;
+  height: 220px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-container {
+  position: relative;
+  width: 180px;
+  height: 240px;
+  transition: all 0.8s ease;
+}
+
+.scroll-ribbon {
+  position: absolute;
+  top: 110px;
+  left: -10px;
+  right: -10px;
+  height: 24px;
+  background-color: var(--scroll-color, #ff6b6b);
+  z-index: 4;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: all 0.5s ease;
+}
+
+.scroll-ribbon.untied {
+  opacity: 0;
+  transform: translateY(40px) scale(0.8);
+  pointer-events: none;
+}
+
+.scroll-paper-body {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  right: 20px;
+  bottom: 15px;
+  background-color: var(--paper-color, #fdf6e2);
+  border: 2.5px solid var(--text);
+  z-index: 2;
+  transform: scaleY(0.05);
+  transform-origin: center center;
+  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.scroll-paper-body.stretched {
+  transform: scaleY(1);
+}
+
+.scroll-inner-text {
+  padding: 16px;
+  text-align: center;
+  font-family: var(--font-serif);
+  color: var(--text);
+  opacity: 0;
+  transition: opacity 0.5s ease 0.4s;
+}
+
+.scroll-paper-body.stretched .scroll-inner-text {
+  opacity: 1;
+}
+
+.scroll-stamp { font-size: 2.2rem; display: block; margin-bottom: 4px; }
+.scroll-inner-text h3 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+.scroll-inner-text p { font-size: 0.75rem; color: #555; text-align: center; margin-top: 6px; }
+
+.scroll-roller {
+  position: absolute;
+  width: 24px;
+  height: 270px;
+  top: -15px;
+  z-index: 3;
+  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.scroll-roller.left { left: 10px; }
+.scroll-roller.right { right: 10px; }
+
+.scroll-roller.left.roll-left { transform: translateX(-80px); }
+.scroll-roller.right.roll-right { transform: translateX(80px); }
+
+.roller-shaft {
+  width: 12px;
+  height: 242px;
+  background: #e2c99b;
+  margin: 0 auto;
+  border-left: 2px solid var(--text);
+  border-right: 2px solid var(--text);
+}
+
+.roller-handle {
+  width: 24px;
+  height: 14px;
+  background: var(--scroll-color, #ff6b6b);
+  border-radius: 4px;
+  border: 2px solid var(--text);
+}
+
+.scroll-seal {
+  bottom: 95px !important;
+  z-index: 5;
+}
+
+/* ============================================================
+   3D BOOK UNWRAP ANIMATION
+   ============================================================ */
+.book-wrapper {
+  perspective: 1000px;
+  width: 320px;
+  height: 240px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-container {
+  position: relative;
+  width: 170px;
+  height: 230px;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+}
+
+.book-back-cover {
+  position: absolute;
+  inset: 0;
+  background: var(--book-color, #ff6b6b);
+  border-radius: 4px 12px 12px 4px;
+  border: 2px solid var(--text);
+  z-index: 1;
+}
+
+.book-page {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  right: 4px;
+  width: 156px;
+  background: #fffdf5;
+  border: 1.5px solid var(--text);
+  border-radius: 0 8px 8px 0;
+  z-index: 2;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  padding: 14px;
+}
+
+.book-page-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  font-family: var(--font-serif);
+}
+
+.book-page-emoji { font-size: 2rem; }
+.book-page-content h4 { font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
+.book-page-content p { font-size: 0.72rem; color: #666; text-align: center; }
+
+.book-cover {
+  position: absolute;
+  inset: 0;
+  background: var(--book-color, #ff6b6b);
+  border-radius: 4px 12px 12px 4px;
+  border: 2px solid var(--text);
+  z-index: 4;
+  transform-origin: left center;
+  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.book-cover.flipped {
+  transform: rotateY(-130deg);
+  z-index: 1;
+}
+
+.book-cover-design {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 1.5px dashed rgba(255,255,255,0.4);
+  margin: 6px;
+  border-radius: 2px 8px 8px 2px;
+}
+
+.book-cover-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.book-cover-subtitle {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.book-clasp {
+  right: -25px !important;
+  bottom: 85px !important;
+  z-index: 5;
+}
+
+/* --- Interactive Shaking Gift Box Sparkles --- */
+.gift-sparkle-dot {
+  animation: sparkle-fade 0.7s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes sparkle-fade {
+  0% { transform: translate(calc(-50% + 0px), calc(-50% + 0px)) scale(1); opacity: 1; }
+  100% { opacity: 0; }
 }

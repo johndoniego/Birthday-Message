@@ -101,10 +101,12 @@ export default function CreatorMode() {
   useEffect(() => {
     if (theme === 'custom') {
       const cardInk = getContrastColor(customCardBgColor);
+      const btnText = getContrastColor(customAccentColor);
       document.body.style.setProperty('--bg', customBgColor);
       document.body.style.setProperty('--card-bg', customCardBgColor);
       document.body.style.setProperty('--text', customTextColor);
       document.body.style.setProperty('--accent', customAccentColor);
+      document.body.style.setProperty('--btn-text-color', btnText);
       document.body.style.setProperty('--border-color', cardInk === '#3D2C2C' ? '#F0D9C6' : '#3a3a5c');
       document.body.style.setProperty('--shadow', `0 6px 24px ${customAccentColor}22`);
       document.body.className = 'theme-custom';
@@ -113,6 +115,7 @@ export default function CreatorMode() {
       document.body.style.removeProperty('--card-bg');
       document.body.style.removeProperty('--text');
       document.body.style.removeProperty('--accent');
+      document.body.style.removeProperty('--btn-text-color');
       document.body.style.removeProperty('--border-color');
       document.body.style.removeProperty('--shadow');
       document.body.className = theme !== 'party' ? `theme-${theme}` : '';
