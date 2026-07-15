@@ -17,6 +17,7 @@
   --text-muted: #9E8A8A;
   --border-color: #F0D9C6;
   --shadow: 0 6px 24px rgba(255, 107, 107, 0.12);
+  --btn-text-color: #ffffff;
 }
 
 .theme-night {
@@ -29,6 +30,7 @@
   --text-muted: #9e95b7;
   --border-color: #3a3a5c;
   --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  --btn-text-color: #ffffff;
 }
 
 .theme-garden {
@@ -41,6 +43,7 @@
   --text-muted: #8DA388;
   --border-color: #D5E3D0;
   --shadow: 0 6px 24px rgba(149, 184, 140, 0.14);
+  --btn-text-color: #ffffff;
 }
 
 .theme-groovy {
@@ -53,6 +56,7 @@
   --text-muted: #A68A6B;
   --border-color: #EAD5B8;
   --shadow: 0 6px 24px rgba(232, 117, 26, 0.12);
+  --btn-text-color: #ffffff;
 }
 
 /* ─────────────────────────────────────────────
@@ -345,6 +349,37 @@ select:focus {
 
 .theme-chip input[type="radio"] {
   display: none;
+}
+
+.occasion-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.occasion-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.occasion-chip:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+.occasion-chip.active {
+  background: rgba(255, 107, 107, 0.12);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .chip-swatch {
@@ -811,9 +846,13 @@ select:focus {
 }
 
 .btn-primary {
-  background: var(--accent) !important;
-  color: var(--btn-text-color, #ffffff) !important;
+  background: var(--accent);
+  color: var(--btn-text-color, #ffffff);
   box-shadow: 0 4px 15px rgba(255, 107, 107, 0.30);
+}
+
+.theme-party .btn-primary {
+  box-shadow: 0 8px 24px rgba(255, 107, 107, 0.42);
 }
 
 .theme-night .btn-primary {
@@ -830,6 +869,10 @@ select:focus {
 
 .btn-primary:hover {
   box-shadow: 0 6px 20px rgba(255, 107, 107, 0.40);
+}
+
+.theme-party .btn-primary:hover {
+  box-shadow: 0 10px 28px rgba(255, 107, 107, 0.52);
 }
 
 .theme-night .btn-primary:hover {

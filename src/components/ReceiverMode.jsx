@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { calcAge, getYouTubeId } from '../utils';
+import { calcAge, getOccasionMeta, getYouTubeId } from '../utils';
 import ParticleCanvas from './ParticleCanvas';
 import EnvelopeUnwrap from './EnvelopeUnwrap';
 import ScrollUnwrap from './ScrollUnwrap';
@@ -154,20 +154,51 @@ export default function ReceiverMode({ data }) {
   const [isRevealed, setIsRevealed] = useState(false);
   const audioRef = useRef(null);
 
-  const themeClass = `theme-${data.theme || 'party'}`;
+  const occasion = data?.o || data?.occasion || 'birthday';
+  const name = data?.n || data?.name || '';
+  const date = data?.d || data?.date || '';
+  const lockUntilBirthday = data?.l ?? data?.lockUntilBirthday ?? true;
+  const theme = data?.t || data?.theme || 'party';
+  const animation = data?.a || data?.animation || 'confetti';
+  const customBgColor = data?.cbg || data?.customBgColor || '#FFF8F0';
+  const customCardBgColor = data?.ccbg || data?.customCardBgColor || '#FFFFFF';
+  const customTextColor = data?.ctc || data?.customTextColor || '#3D2C2C';
+  const customAccentColor = data?.cac || data?.customAccentColor || '#FF6B6B';
+  const unwrapType = data?.u || data?.unwrapType || 'envelope';
+  const hasSeal = data?.hs ?? data?.hasSeal ?? true;
+  const unwrapColor = data?.uc || data?.unwrapColor || '#ff6b6b';
+  const sealColor = data?.sc || data?.sealColor || '#d63031';
+  const sealEmblem = data?.se || data?.sealEmblem || '🎂';
+  const messageHTML = data?.m || data?.messageHTML || '';
+  const wordart = data?.w || data?.wordart || 'none';
+  const fontFamily = data?.ff || data?.fontFamily || '';
+  const fontSize = data?.fs || data?.fontSize || '';
+  const textColor = data?.tc || data?.textColor || '';
+  const textAlign = data?.ta || data?.textAlign || 'center';
+  const fontWeight = data?.fw || data?.fontWeight || '400';
+  const letterSpacing = data?.ls || data?.letterSpacing || 'normal';
+  const lineHeight = data?.lh || data?.lineHeight || '1.5';
+  const textShadow = data?.ts || data?.textShadow || 'none';
+  const imageUrl = data?.i || data?.imageUrl || '';
+  const videoUrl = data?.v || data?.videoUrl || '';
+  const audioUrl = data?.au || data?.audioUrl || '';
+  const gifts = data?.g || data?.gifts || [];
+  const occasionMeta = getOccasionMeta(occasion);
+  const audioIsYoutube = Boolean(getYouTubeId(audioUrl));
+  const themeClass = `theme-${theme || 'party'}`;
 
   // Date Locking Check and Countdown
   useEffect(() => {
-    if (data.theme === 'custom') {
-      const cardInk = getContrastColor(data.customCardBgColor || '#FFFFFF');
-      const btnText = getContrastColor(data.customAccentColor || '#FF6B6B');
-      document.body.style.setProperty('--bg', data.customBgColor || '#FFF8F0');
-      document.body.style.setProperty('--card-bg', data.customCardBgColor || '#FFFFFF');
-      document.body.style.setProperty('--text', data.customTextColor || '#3D2C2C');
-      document.body.style.setProperty('--accent', data.customAccentColor || '#FF6B6B');
+    if (theme === 'custom') {
+      const cardInk = getContrastColor(customCardBgColor || '#FFFFFF');
+      const btnText = getContrastColor(customAccentColor || '#FF6B6B');
+      document.body.style.setProperty('--bg', customBgColor || '#FFF8F0');
+      document.body.style.setProperty('--card-bg', customCardBgColor || '#FFFFFF');
+      document.body.style.setProperty('--text', customTextColor || '#3D2C2C');
+      document.body.style.setProperty('--accent', customAccentColor || '#FF6B6B');
       document.body.style.setProperty('--btn-text-color', btnText);
       document.body.style.setProperty('--border-color', cardInk === '#3D2C2C' ? '#F0D9C6' : '#3a3a5c');
-      document.body.style.setProperty('--shadow', `0 6px 24px ${data.customAccentColor || '#FF6B6B'}22`);
+      document.body.style.setProperty('--shadow', `0 6px 24px ${customAccentColor || '#FF6B6B'}22`);
       document.body.className = 'theme-custom';
     } else {
       document.body.style.removeProperty('--bg');
@@ -177,18 +208,18 @@ export default function ReceiverMode({ data }) {
       document.body.style.removeProperty('--btn-text-color');
       document.body.style.removeProperty('--border-color');
       document.body.style.removeProperty('--shadow');
-      document.body.className = data.theme && data.theme !== 'party' ? `theme-${data.theme}` : '';
+      document.body.className = theme === 'party' ? 'theme-party' : `theme-${theme}`;
     }
 
     // Check if locking is bypassed
-    const shouldLock = data.lockUntilBirthday !== false;
+    const shouldLock = lockUntilBirthday !== false;
     
     if (!shouldLock) {
       setIsLocked(false);
       return;
     }
 
-    const birthDate = new Date(data.date);
+    const birthDate = new Date(date);
     const today = new Date();
     
     // Target is birthday day & month, in the current year
@@ -230,17 +261,17 @@ export default function ReceiverMode({ data }) {
     } else {
       setIsLocked(false);
     }
-  }, [data.date, themeClass, data.lockUntilBirthday]);
+  }, [date, themeClass, lockUntilBirthday, theme, customBgColor, customCardBgColor, customTextColor, customAccentColor]);
 
   // Audio trigger
   useEffect(() => {
-    if (isRevealed && data.audioUrl && audioRef.current) {
+    if (isRevealed && audioUrl && audioRef.current && !audioIsYoutube) {
       audioRef.current.volume = 0.5;
-      audioRef.current.play().catch((err) => {
+      audioRef.current.play().catch(() => {
         console.log('Autoplay blocked by browser. User interaction required.');
       });
     }
-  }, [isRevealed, data.audioUrl]);
+  }, [isRevealed, audioUrl, audioIsYoutube]);
 
   const handleUnwrapped = () => {
     setIsUnwrapped(true);
@@ -259,7 +290,7 @@ export default function ReceiverMode({ data }) {
   };
 
   if (isLocked) {
-    const birthDate = new Date(data.date);
+    const birthDate = new Date(date);
     const dateFormatted = `${birthDate.getMonth() + 1}/${birthDate.getDate()}`;
     return (
       <div id="date-lock-screen" className="date-lock-screen">
@@ -269,8 +300,8 @@ export default function ReceiverMode({ data }) {
             <div className="envelope-flap"></div>
             <div className="envelope-seal">&#128274;</div>
           </div>
-          <h1 className="lock-title">This surprise isn't ready yet!</h1>
-          <p className="lock-sub">It's not your birthday yet! Come back on {dateFormatted}.</p>
+          <h1 className="lock-title">{occasionMeta.lockTitle}</h1>
+          <p className="lock-sub">{occasionMeta.lockMessage(dateFormatted)}</p>
           <div className="countdown-row">
             <div className="cd-unit">
               <span className="cd-num">{String(countdown.days).padStart(2, '0')}</span>
@@ -295,7 +326,7 @@ export default function ReceiverMode({ data }) {
   }
 
   // Choose the unwrap type: envelope, scroll, book
-  const type = data.unwrapType || 'envelope';
+  const type = unwrapType || 'envelope';
 
   // Helper to build typography text shadow glow styles
   const getShadowStyle = (styleName) => {
@@ -316,10 +347,19 @@ export default function ReceiverMode({ data }) {
   return (
     <>
       {/* Background Audio */}
-      {data.audioUrl && <audio ref={audioRef} src={data.audioUrl} loop />}
+      {audioUrl && (audioIsYoutube ? (
+        <iframe
+          title="background-audio"
+          src={`https://www.youtube.com/embed/${getYouTubeId(audioUrl)}?autoplay=1&mute=1&loop=1&playlist=${getYouTubeId(audioUrl)}`}
+          allow="autoplay"
+          style={{ display: 'none', border: 'none' }}
+        />
+      ) : (
+        <audio ref={audioRef} src={audioUrl} loop />
+      ))}
 
       {/* Particle Canvas Effect when card is fully revealed */}
-      <ParticleCanvas type={data.animation || 'confetti'} active={isRevealed} />
+      <ParticleCanvas type={animation || 'confetti'} active={isRevealed} />
 
       {/* Unwrap Overlays */}
       {!isRevealed && (
@@ -327,43 +367,43 @@ export default function ReceiverMode({ data }) {
           <div className="unwrap-center">
             {type === 'envelope' && (
               <EnvelopeUnwrap
-                envelopeColor={data.unwrapColor}
-                sealColor={data.sealColor}
-                sealEmblem={data.sealEmblem}
-                hasSeal={data.hasSeal !== false}
+                envelopeColor={unwrapColor}
+                sealColor={sealColor}
+                sealEmblem={sealEmblem}
+                hasSeal={hasSeal !== false}
                 onUnwrapped={handleUnwrapped}
               />
             )}
             {type === 'scroll' && (
               <ScrollUnwrap
-                scrollColor={data.unwrapColor}
-                sealColor={data.sealColor}
-                sealEmblem={data.sealEmblem}
-                hasSeal={data.hasSeal !== false}
+                scrollColor={unwrapColor}
+                sealColor={sealColor}
+                sealEmblem={sealEmblem}
+                hasSeal={hasSeal !== false}
                 onUnwrapped={handleUnwrapped}
               />
             )}
             {type === 'book' && (
               <BookUnwrap
-                bookColor={data.unwrapColor}
-                sealColor={data.sealColor}
-                sealEmblem={data.sealEmblem}
-                hasSeal={data.hasSeal !== false}
+                bookColor={unwrapColor}
+                sealColor={sealColor}
+                sealEmblem={sealEmblem}
+                hasSeal={hasSeal !== false}
                 onUnwrapped={handleUnwrapped}
               />
             )}
             {type === 'scratch' && (
               <ScratchUnwrap
-                unwrapColor={data.unwrapColor}
+                unwrapColor={unwrapColor}
                 onUnwrapped={handleUnwrapped}
               />
             )}
             {type === 'giftbox' && (
               <GiftBoxUnwrap
-                boxColor={data.unwrapColor}
-                sealColor={data.sealColor}
-                sealEmblem={data.sealEmblem}
-                hasSeal={data.hasSeal !== false}
+                boxColor={unwrapColor}
+                sealColor={sealColor}
+                sealEmblem={sealEmblem}
+                hasSeal={hasSeal !== false}
                 onUnwrapped={handleUnwrapped}
               />
             )}
@@ -378,48 +418,48 @@ export default function ReceiverMode({ data }) {
       {isRevealed && (
         <div className="card receiver-card reveal">
           <div className="rc-header">
-            {data.date && (
+            {date && occasionMeta.badgeText && (
               <div className="rc-age-badge" id="rc-age">
-                {calcAge(data.date)} years young!
+                {occasionMeta.badgeText(calcAge(date))}
               </div>
             )}
             <h1 className="rc-name" id="rc-name">
-              Happy Birthday, {data.name}!
+              {occasionMeta.greeting(name)}
             </h1>
           </div>
           <div className="rc-body">
             {/* Custom Styled Message */}
             <div
-              className={`rc-message wordart-${data.wordart || 'none'}`}
+              className={`rc-message wordart-${wordart || 'none'}`}
               id="rc-message"
               style={{
-                fontFamily: data.fontFamily || '',
-                fontSize: data.fontSize || '',
-                textAlign: data.textAlign || 'center',
-                color: data.textColor || '',
-                fontWeight: data.fontWeight || '400',
-                letterSpacing: data.letterSpacing || 'normal',
-                lineHeight: data.lineHeight || '1.5',
-                textShadow: getShadowStyle(data.textShadow || 'none'),
+                fontFamily: fontFamily || '',
+                fontSize: fontSize || '',
+                textAlign: textAlign || 'center',
+                color: textColor || '',
+                fontWeight: fontWeight || '400',
+                letterSpacing: letterSpacing || 'normal',
+                lineHeight: lineHeight || '1.5',
+                textShadow: getShadowStyle(textShadow || 'none'),
               }}
-              dangerouslySetInnerHTML={{ __html: data.messageHTML || '' }}
+              dangerouslySetInnerHTML={{ __html: messageHTML || '' }}
             />
 
             {/* Media (Image or Video) */}
-            {data.imageUrl && (
+            {imageUrl && (
               <div className="rc-media" id="rc-media">
                 <img
-                  src={data.imageUrl}
+                  src={imageUrl}
                   alt="Birthday media"
                   style={{ maxWidth: '100%', borderRadius: '12px' }}
                 />
               </div>
             )}
-            {data.videoUrl && (
+            {videoUrl && (
               <div className="rc-media" id="rc-media">
-                {getYouTubeId(data.videoUrl) ? (
+                {getYouTubeId(videoUrl) ? (
                   <iframe
-                    src={`https://www.youtube.com/embed/${getYouTubeId(data.videoUrl)}`}
+                    src={`https://www.youtube.com/embed/${getYouTubeId(videoUrl)}`}
                     width="100%"
                     height="315"
                     frameBorder="0"
@@ -429,7 +469,7 @@ export default function ReceiverMode({ data }) {
                   ></iframe>
                 ) : (
                   <video
-                    src={data.videoUrl}
+                    src={videoUrl}
                     controls
                     style={{ maxWidth: '100%', borderRadius: '12px' }}
                   ></video>
@@ -438,13 +478,13 @@ export default function ReceiverMode({ data }) {
             )}
 
             {/* Virtual Gifts - Bursting interactive items */}
-            {data.gifts && data.gifts.length > 0 && (
+            {gifts && gifts.length > 0 && (
               <div className="rc-gifts" id="rc-gifts">
                 <h3 className="rc-gifts-title">
                   <i className="fa-solid fa-gift"></i> Your Virtual Gifts
                 </h3>
                 <div className="rc-gifts-grid" id="rc-gifts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '15px', marginTop: '16px' }}>
-                  {data.gifts.map((g, idx) => (
+                  {gifts.map((g, idx) => (
                     <InteractiveGift key={idx} gift={g} idx={idx} />
                   ))}
                 </div>

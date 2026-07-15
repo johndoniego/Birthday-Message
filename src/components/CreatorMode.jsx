@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { encodeData, getYouTubeId, calcAge } from '../utils';
+import { encodeData, getYouTubeId, calcAge, getOccasionMeta } from '../utils';
 import ParticleCanvas from './ParticleCanvas';
 
 // Helper to get CSS textShadow based on selected style
@@ -33,6 +33,7 @@ function getContrastColor(hex) {
 
 export default function CreatorMode() {
   // Form states
+  const [occasion, setOccasion] = useState('birthday');
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [lockUntilBirthday, setLockUntilBirthday] = useState(true); // new bypass option
@@ -96,6 +97,8 @@ export default function CreatorMode() {
   const unwrapColorInputRef = useRef(null);
   const sealColorInputRef = useRef(null);
   const sealImageFileInputRef = useRef(null);
+
+  const occasionMeta = getOccasionMeta(occasion);
 
   // Sync theme changes with body class
   useEffect(() => {
@@ -291,7 +294,7 @@ export default function CreatorMode() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !birthDate) {
-      alert('Please fill in both the Name and Birthday Date!');
+      alert('Please fill in both the name and date!');
       return;
     }
 
@@ -308,46 +311,47 @@ export default function CreatorMode() {
     }
 
     const data = {
-      name: name.trim(),
-      date: birthDate,
-      lockUntilBirthday, // lock override toggle
-      theme,
-      animation,
+      o: occasion,
+      n: name.trim(),
+      d: birthDate,
+      l: lockUntilBirthday,
+      t: theme,
+      a: animation,
       // Custom theme details
-      customBgColor: theme === 'custom' ? customBgColor : undefined,
-      customCardBgColor: theme === 'custom' ? customCardBgColor : undefined,
-      customTextColor: theme === 'custom' ? customTextColor : undefined,
-      customAccentColor: theme === 'custom' ? customAccentColor : undefined,
+      cbg: theme === 'custom' ? customBgColor : undefined,
+      ccbg: theme === 'custom' ? customCardBgColor : undefined,
+      ctc: theme === 'custom' ? customTextColor : undefined,
+      cac: theme === 'custom' ? customAccentColor : undefined,
       // Unwrap Customizations
-      unwrapType,
-      hasSeal,
-      unwrapColor,
-      sealColor,
-      sealEmblem: finalEmblem,
+      u: unwrapType,
+      hs: hasSeal,
+      uc: unwrapColor,
+      sc: sealColor,
+      se: finalEmblem,
       // Typography
-      messageHTML,
-      wordart,
-      fontFamily,
-      fontSize: {
+      m: messageHTML,
+      w: wordart,
+      ff: fontFamily,
+      fs: {
         '3': '0.9rem',
         '4': '1.1rem',
         '5': '1.4rem',
         '6': '1.8rem',
       }[fontSize] || '1.1rem',
-      textColor,
-      textAlign,
-      fontWeight,
-      letterSpacing,
-      lineHeight,
-      textShadow,
+      tc: textColor,
+      ta: textAlign,
+      fw: fontWeight,
+      ls: letterSpacing,
+      lh: lineHeight,
+      ts: textShadow,
       // Media
-      imageUrl: finalImage,
-      videoUrl: finalVideo,
-      audioUrl: finalAudio,
+      i: finalImage,
+      v: finalVideo,
+      au: finalAudio,
       // Gifts
-      gifts: gifts
+      g: gifts
         .map((g) => ({ title: g.title.trim(), url: g.url.trim() }))
-        .filter((g) => g.url.trim() !== ''), // keep gifts as long as URL exists!
+        .filter((g) => g.url.trim() !== ''),
     };
 
     const encoded = encodeData(data);
@@ -379,11 +383,11 @@ export default function CreatorMode() {
         <div className="doodle doodle-star top-left">&#9733;</div>
         <div className="doodle doodle-heart top-right">&#9829;</div>
         <h1 className="hero-title">
-          <span className="hero-cake">&#127874;</span>
-          Birthday Surprise Maker
+          <span className="hero-cake">{occasionMeta.emoji}</span>
+          {occasionMeta.heroTitle}
         </h1>
         <p className="hero-sub">
-          Put together a beautiful, custom birthday greeting. They won't be able to open it until the big day!
+          {occasionMeta.heroSubtitle}
         </p>
       </header>
 
@@ -391,25 +395,50 @@ export default function CreatorMode() {
         {/* LEFT: Creator Form */}
         <div className="card form-card">
           <form onSubmit={handleSubmit} autoComplete="off">
-            {/* 1. Name */}
+            {/* 1. Occasion */}
+            <div className="field">
+              <label><span className="field-icon">✨</span> Occasion</label>
+              <div className="occasion-picker">
+                {[
+                  { value: 'birthday', emoji: '🎂', label: 'Birthday' },
+                  { value: 'congratulations', emoji: '🎉', label: 'Congratulations' },
+                  { value: 'job-promotion', emoji: '💼', label: 'Job Promotion' },
+                  { value: 'youre-hired', emoji: '🎊', label: "You're Hired!" },
+                  { value: 'anniversary', emoji: '💝', label: 'Anniversary' },
+                  { value: 'graduation', emoji: '🎓', label: 'Graduation' },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`occasion-chip ${occasion === option.value ? 'active' : ''}`}
+                    onClick={() => setOccasion(option.value)}
+                  >
+                    <span>{option.emoji}</span>
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. Name */}
             <div className="field">
               <label htmlFor="input-name">
-                <span className="field-icon">&#127880;</span> Birthday Person's Name
+                <span className="field-icon">{occasionMeta.emoji}</span> {occasionMeta.nameLabel}
               </label>
               <input
                 type="text"
                 id="input-name"
-                placeholder="Their name"
+                placeholder={occasionMeta.namePlaceholder}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
 
-            {/* 2. Date + Lock Override toggle */}
+            {/* 3. Date + Lock Override toggle */}
             <div className="field">
               <label htmlFor="input-date">
-                <span className="field-icon">&#128197;</span> Birthday Date
+                <span className="field-icon">&#128197;</span> {occasionMeta.dateLabel}
               </label>
               <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                 <input
@@ -434,12 +463,12 @@ export default function CreatorMode() {
               </div>
               <p className="field-hint">
                 {lockUntilBirthday 
-                  ? 'Recipients will be blocked by a countdown until their birthday!'
-                  : 'Surprise card can be opened immediately, even before their birthday.'}
+                  ? occasionMeta.dateHint
+                  : 'Surprise card can be opened immediately, even before the date.'}
               </p>
             </div>
 
-            {/* 3. Vibe Theme Picker */}
+            {/* 4. Vibe Theme Picker */}
             <div className="field">
               <label><span className="field-icon">&#127912;</span> Card Theme Vibe</label>
               <div className="theme-picker">
@@ -505,7 +534,7 @@ export default function CreatorMode() {
               </div>
             )}
 
-            {/* 4. Particle Reveal Animation Picker */}
+            {/* 5. Particle Reveal Animation Picker */}
             <div className="field">
               <label><span className="field-icon">&#10024;</span> Particle Reveal Animation</label>
               <div className="animation-picker">
@@ -725,9 +754,9 @@ export default function CreatorMode() {
               </div>
             </div>
 
-            {/* 5. Rich Text Typography Message Editor */}
+            {/* 6. Rich Text Typography Message Editor */}
             <div className="field">
-              <label><span className="field-icon">&#9997;&#65039;</span> Write Your Birthday Message</label>
+              <label><span className="field-icon">&#9997;&#65039;</span> {occasionMeta.messageLabel}</label>
               <div className="editor-wrap">
                 <div className="editor-toolbar">
                   {/* Font Family selector (16 options) */}
@@ -921,7 +950,7 @@ export default function CreatorMode() {
                   className={`editor-area wordart-${wordart}`}
                   contentEditable="true" 
                   onInput={handleEditorInput}
-                  data-placeholder="Type your heartfelt birthday message here..."
+                  data-placeholder={occasionMeta.messagePlaceholder}
                   style={{
                     fontFamily,
                     color: textColor,
@@ -941,7 +970,7 @@ export default function CreatorMode() {
               </div>
             </div>
 
-            {/* 6. Attach Media */}
+            {/* 7. Attach Media */}
             <div className="field">
               <label><span className="field-icon">&#128247;</span> Attach Media <span className="optional-tag">optional</span></label>
               <div className="media-tabs">
@@ -1031,7 +1060,7 @@ export default function CreatorMode() {
                   <div id="tab-audio" className="mpane active">
                     <input 
                       type="url" 
-                      placeholder="Direct MP3 link for background music"
+                      placeholder="YouTube URL, SoundCloud, or direct audio link"
                       value={audioUrl}
                       onChange={(e) => {
                         setAudioUrl(e.target.value);
@@ -1058,7 +1087,7 @@ export default function CreatorMode() {
               </div>
             </div>
 
-            {/* 7. Virtual Gifts */}
+            {/* 8. Virtual Gifts */}
             <div className="field">
               <label><span className="field-icon">&#127873;</span> Virtual Gifts <span className="optional-tag">optional</span></label>
               <div id="gifts-list">
@@ -1128,13 +1157,13 @@ export default function CreatorMode() {
               <ParticleCanvas type={animation} active={previewAnimActive} isPreview={true} />
 
               <div className="preview-inner" id="preview-inner">
-                {birthDate && (
+                {birthDate && occasionMeta.badgeText && (
                   <div className="prev-age-badge" id="prev-age">
-                    {calcAge(birthDate)} years young!
+                    {occasionMeta.badgeText(calcAge(birthDate))}
                   </div>
                 )}
                 <h2 className="prev-name" id="prev-name">
-                  {name ? `Happy Birthday, ${name}!` : 'Happy Birthday!'}
+                  {occasionMeta.previewGreeting(name)}
                 </h2>
                 
                 <div 
@@ -1224,7 +1253,7 @@ export default function CreatorMode() {
           <div className="card modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="modal-icon">&#127881;</div>
             <h2>Your surprise link is ready!</h2>
-            <p>Copy this link and send it to them. They won't be able to peek — it only opens on their birthday.</p>
+            <p>Copy this link and send it to them. They won't be able to peek — it only opens on {occasionMeta.modalHint}.</p>
             <div className="link-copy-row">
               <input 
                 type="text" 

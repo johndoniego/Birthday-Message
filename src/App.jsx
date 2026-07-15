@@ -3,6 +3,20 @@ import CreatorMode from './components/CreatorMode';
 import ReceiverMode from './components/ReceiverMode';
 import { decodeData } from './utils';
 
+function decodeCardData(encoded) {
+  const parsed = decodeData(encoded);
+  if (parsed) {
+    return parsed;
+  }
+
+  try {
+    const json = decodeURIComponent(escape(atob(encoded)));
+    return JSON.parse(json);
+  } catch (error) {
+    return null;
+  }
+}
+
 function App() {
   const [receiverData, setReceiverData] = useState(null);
   const [isReceiver, setIsReceiver] = useState(false);
@@ -12,7 +26,7 @@ function App() {
       const hash = window.location.hash;
       if (hash.startsWith('#card=')) {
         const encoded = hash.substring(6);
-        const data = decodeData(encoded);
+        const data = decodeCardData(encoded);
         if (data) {
           setReceiverData(data);
           setIsReceiver(true);
