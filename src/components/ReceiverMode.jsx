@@ -367,9 +367,8 @@ export default function ReceiverMode({ data }) {
       <ParticleCanvas type={animation || 'confetti'} active={isRevealed} />
 
       {/* Unwrap Overlays */}
-      {!isRevealed && (
-        <div className={`unwrap-overlay ${isUnwrapped ? 'fade-out' : ''}`}>
-          <div className="unwrap-center">
+      <div className={`unwrap-overlay ${isUnwrapped ? 'fade-out' : ''} ${!isRevealed && !isUnwrapped ? 'active' : ''}`} style={{ display: isRevealed && isUnwrapped ? 'none' : 'flex' }}>
+        <div className="unwrap-center">
             {type === 'envelope' && (
               <EnvelopeUnwrap
                 envelopeColor={unwrapColor}
@@ -384,7 +383,7 @@ export default function ReceiverMode({ data }) {
                 scrollColor={unwrapColor}
                 sealColor={sealColor}
                 sealEmblem={sealEmblem}
-                hasSeal={hasSeal !== false}
+                hasSeal={false}
                 onUnwrapped={handleUnwrapped}
               />
             )}
@@ -393,7 +392,7 @@ export default function ReceiverMode({ data }) {
                 bookColor={unwrapColor}
                 sealColor={sealColor}
                 sealEmblem={sealEmblem}
-                hasSeal={hasSeal !== false}
+                hasSeal={false}
                 onUnwrapped={handleUnwrapped}
               />
             )}
@@ -408,7 +407,7 @@ export default function ReceiverMode({ data }) {
                 boxColor={unwrapColor}
                 sealColor={sealColor}
                 sealEmblem={sealEmblem}
-                hasSeal={hasSeal !== false}
+                hasSeal={false}
                 onUnwrapped={handleUnwrapped}
               />
             )}
@@ -434,12 +433,8 @@ export default function ReceiverMode({ data }) {
                 onUnwrapped={handleUnwrapped}
               />
             )}
-            <p className="uw-tap-text" style={{ marginTop: '30px' }}>
-              A surprise is waiting for you...
-            </p>
           </div>
         </div>
-      )}
 
       {/* The Actual Birthday Card (reveals after unwrap) */}
       {isRevealed && (

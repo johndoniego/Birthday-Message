@@ -78,8 +78,6 @@ export default function ScratchUnwrap({
 
   const handleMove = (e) => {
     if (!isDrawing) return;
-    // Prevent mobile scrolling while scratching
-    if (e.cancelable) e.preventDefault();
     const { x, y } = getCoordinates(e);
     scratch(x, y);
   };
@@ -117,13 +115,12 @@ export default function ScratchUnwrap({
   return (
     <div className="scratch-wrapper">
       <div className="scratch-underlay">
-        <span className="scratch-badge">🎁</span>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--color-ink)', margin: '0 0 4px 0' }}>Surprise Unlocked!</h3>
-        <p style={{ fontSize: '0.78rem', color: 'var(--color-ink)', opacity: 0.8, margin: 0 }}>Almost there! Preparing your card details...</p>
+        <span className="scratch-badge">✨</span>
       </div>
       <canvas
         ref={canvasRef}
         className="scratch-canvas"
+        style={{ touchAction: 'none' }}
         onTouchStart={handleStart}
         onTouchMove={handleMove}
         onTouchEnd={handleEnd}
