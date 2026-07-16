@@ -585,19 +585,23 @@ export default function CreatorMode() {
               {/* Unwrap Style (envelope, scroll, book) */}
               <div style={{ marginBottom: '18px' }}>
                 <label style={{ fontSize: '0.85rem' }}>Select Unwrap Type</label>
-                <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '6px' }}>
                   {[
                     { value: 'envelope', label: '✉️ 3D Envelope' },
                     { value: 'scroll', label: '📜 Royal Scroll' },
                     { value: 'book', label: '📖 Memory Book' },
                     { value: 'scratch', label: '🎨 Scratch Card' },
                     { value: 'giftbox', label: '🎁 Gift Box Pop' },
+                    { value: 'magic-orb', label: '🔮 Magic Orb' },
+                    { value: 'origami', label: '🕊️ Origami Fold' },
+                    { value: 'vault', label: '🗄️ The Vault' },
+                    { value: 'curtain', label: '🎭 Theater Curtains' },
                   ].map((styleOpt) => (
                     <button
                       key={styleOpt.value}
                       type="button"
                       className={`btn btn-dashed ${unwrapType === styleOpt.value ? 'btn-primary' : ''}`}
-                      style={{ flex: 1, padding: '10px', borderRadius: '10px' }}
+                      style={{ flex: '1 1 calc(33% - 10px)', padding: '10px', borderRadius: '10px', minWidth: '120px' }}
                       onClick={() => setUnwrapType(styleOpt.value)}
                     >
                       {styleOpt.label}

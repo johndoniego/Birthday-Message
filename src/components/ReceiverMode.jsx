@@ -6,6 +6,10 @@ import ScrollUnwrap from './ScrollUnwrap';
 import BookUnwrap from './BookUnwrap';
 import ScratchUnwrap from './ScratchUnwrap';
 import GiftBoxUnwrap from './GiftBoxUnwrap';
+import MagicOrbUnwrap from './MagicOrbUnwrap';
+import OrigamiUnwrap from './OrigamiUnwrap';
+import VaultUnwrap from './VaultUnwrap';
+import CurtainUnwrap from './CurtainUnwrap';
 
 // Interactive Bursting Gift Box Component
 function InteractiveGift({ gift, idx }) {
@@ -405,6 +409,28 @@ export default function ReceiverMode({ data }) {
                 sealColor={sealColor}
                 sealEmblem={sealEmblem}
                 hasSeal={hasSeal !== false}
+                onUnwrapped={handleUnwrapped}
+              />
+            )}
+            {type === 'magic-orb' && (
+              <MagicOrbUnwrap
+                orbColor={unwrapColor}
+                onUnwrapped={handleUnwrapped}
+              />
+            )}
+            {type === 'origami' && (
+              <OrigamiUnwrap
+                oriColor={unwrapColor}
+                onUnwrapped={handleUnwrapped}
+              />
+            )}
+            {type === 'vault' && (
+              <VaultUnwrap
+                onUnwrapped={handleUnwrapped}
+              />
+            )}
+            {type === 'curtain' && (
+              <CurtainUnwrap
                 onUnwrapped={handleUnwrapped}
               />
             )}
