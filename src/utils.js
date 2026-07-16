@@ -1,45 +1,42 @@
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
+import LZString from 'lz-string';
 
-function sanitizeData(value) {
-  if (Array.isArray(value)) {
-    return value.map(sanitizeData).filter((item) => item !== undefined);
-  }
-
-  if (value && typeof value === 'object') {
-    return Object.entries(value).reduce((acc, [key, item]) => {
-      if (item !== undefined) {
-        acc[key] = sanitizeData(item);
-      }
-      return acc;
-    }, {});
-  }
-
-  return value;
-}
-
+// ── Encode / Decode with LZString ──────────────────────
+// Data is already abbreviated by the caller — we just compress.
 export function encodeData(obj) {
-  const json = JSON.stringify(sanitizeData(obj));
-  return compressToEncodedURIComponent(json);
+  // Strip undefined/null/empty values to shrink payload
+  const clean = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val !== undefined && val !== '' && val !== null) {
+      clean[key] = val;
+    }
+  }
+  const json = JSON.stringify(clean);
+  // Use LZString URI-safe compression
+  return LZString.compressToEncodedURIComponent(json);
 }
 
 export function decodeData(str) {
   try {
-    const normalized = typeof str === 'string' ? str.trim() : '';
-    if (!normalized) return null;
-
-    const compressed = decompressFromEncodedURIComponent(normalized);
-    if (compressed) {
-      return JSON.parse(compressed);
+    // Try LZString decompression first (new format)
+    let json = LZString.decompressFromEncodedURIComponent(str);
+    if (json) {
+      return JSON.parse(json);
     }
-
-    const bytes = Uint8Array.from(atob(normalized), (char) => char.charCodeAt(0));
-    const json = new TextDecoder().decode(bytes);
+    // Fallback: old-style base64 encoding (backwards compat)
+    json = decodeURIComponent(escape(atob(str)));
     return JSON.parse(json);
   } catch (e) {
-    return null;
+    // Second fallback attempt with plain base64
+    try {
+      const json = decodeURIComponent(escape(atob(str)));
+      return JSON.parse(json);
+    } catch (e2) {
+      return null;
+    }
   }
 }
 
+// ── YouTube ID Extractor ───────────────────────────────
 export function getYouTubeId(url) {
   if (!url) return null;
   const regex = /(?:youtube\.com\/(?:watch\?.*v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -47,129 +44,7 @@ export function getYouTubeId(url) {
   return match ? match[1] : null;
 }
 
-export function getOccasionMeta(occasion = 'birthday') {
-  const key = String(occasion || 'birthday').toLowerCase();
-
-  const occasions = {
-    birthday: {
-      key: 'birthday',
-      emoji: '🎂',
-      label: 'Birthday',
-      nameLabel: "Birthday Person's Name",
-      dateLabel: 'Birthday Date',
-      messageLabel: 'Write Your Birthday Message',
-      messagePlaceholder: 'Type your heartfelt birthday message here...',
-      namePlaceholder: 'Their name',
-      heroTitle: 'Surprise Card Maker',
-      heroSubtitle: "Put together a beautiful, custom birthday greeting. They won't be able to open it until the big day!",
-      greeting: (name) => `Happy Birthday, ${name}!`,
-      badgeText: (age) => `${age} years young!`,
-      lockTitle: "This surprise isn't ready yet!",
-      lockMessage: (dateFormatted) => `It's not your birthday yet! Come back on ${dateFormatted}.`,
-      previewGreeting: (name) => (name ? `Happy Birthday, ${name}!` : 'Happy Birthday!'),
-      modalHint: 'their birthday',
-      dateHint: 'Recipients will be blocked by a countdown until their birthday!'
-    },
-    congratulations: {
-      key: 'congratulations',
-      emoji: '🎉',
-      label: 'Congratulations',
-      nameLabel: "Recipient's Name",
-      dateLabel: 'Special Date',
-      messageLabel: 'Write Your Congratulations Message',
-      messagePlaceholder: 'Type your warm congratulations here...',
-      namePlaceholder: 'Their name',
-      heroTitle: 'Surprise Card Maker',
-      heroSubtitle: 'Create a heartfelt celebration card for a special milestone.',
-      greeting: (name) => `Congratulations, ${name}!`,
-      badgeText: () => null,
-      lockTitle: "This surprise isn't ready yet!",
-      lockMessage: (dateFormatted) => `The celebration isn't ready yet. Come back on ${dateFormatted}.`,
-      previewGreeting: (name) => (name ? `Congratulations, ${name}!` : 'Congratulations!'),
-      modalHint: 'the celebration date',
-      dateHint: 'Recipients will see a countdown until the celebration date.'
-    },
-    'job-promotion': {
-      key: 'job-promotion',
-      emoji: '💼',
-      label: 'Job Promotion',
-      nameLabel: 'Their Name',
-      dateLabel: 'Celebration Date',
-      messageLabel: 'Write Your Promotion Message',
-      messagePlaceholder: 'Type your promotion message here...',
-      namePlaceholder: 'Their name',
-      heroTitle: 'Surprise Card Maker',
-      heroSubtitle: 'Celebrate their new milestone with a polished surprise card.',
-      greeting: (name) => `You Got Promoted, ${name}!`,
-      badgeText: () => null,
-      lockTitle: "This surprise isn't ready yet!",
-      lockMessage: (dateFormatted) => `The promotion surprise isn't ready yet. Come back on ${dateFormatted}.`,
-      previewGreeting: (name) => (name ? `You Got Promoted, ${name}!` : 'You Got Promoted!'),
-      modalHint: 'the celebration date',
-      dateHint: 'Recipients will see a countdown until the celebration date.'
-    },
-    'youre-hired': {
-      key: 'youre-hired',
-      emoji: '🎊',
-      label: "You're Hired!",
-      nameLabel: "New Hire's Name",
-      dateLabel: 'Start Date',
-      messageLabel: 'Write Your Welcome Message',
-      messagePlaceholder: 'Type your welcoming message here...',
-      namePlaceholder: 'Their name',
-      heroTitle: 'Surprise Card Maker',
-      heroSubtitle: 'Welcome them aboard with a cheerful surprise card.',
-      greeting: (name) => `Welcome Aboard, ${name}!`,
-      badgeText: () => null,
-      lockTitle: "This surprise isn't ready yet!",
-      lockMessage: (dateFormatted) => `The welcome surprise isn't ready yet. Come back on ${dateFormatted}.`,
-      previewGreeting: (name) => (name ? `Welcome Aboard, ${name}!` : 'Welcome Aboard!'),
-      modalHint: 'the start date',
-      dateHint: 'Recipients will see a countdown until the start date.'
-    },
-    anniversary: {
-      key: 'anniversary',
-      emoji: '💝',
-      label: 'Anniversary',
-      nameLabel: "Couple's Name",
-      dateLabel: 'Anniversary Date',
-      messageLabel: 'Write Your Anniversary Message',
-      messagePlaceholder: 'Type your anniversary message here...',
-      namePlaceholder: 'Their names',
-      heroTitle: 'Surprise Card Maker',
-      heroSubtitle: 'Celebrate their special day with a heartfelt surprise card.',
-      greeting: (name) => `Happy Anniversary, ${name}!`,
-      badgeText: () => null,
-      lockTitle: "This surprise isn't ready yet!",
-      lockMessage: (dateFormatted) => `The anniversary surprise isn't ready yet. Come back on ${dateFormatted}.`,
-      previewGreeting: (name) => (name ? `Happy Anniversary, ${name}!` : 'Happy Anniversary!'),
-      modalHint: 'the anniversary date',
-      dateHint: 'Recipients will see a countdown until the anniversary date.'
-    },
-    graduation: {
-      key: 'graduation',
-      emoji: '🎓',
-      label: 'Graduation',
-      nameLabel: "Graduate's Name",
-      dateLabel: 'Graduation Date',
-      messageLabel: 'Write Your Graduation Message',
-      messagePlaceholder: 'Type your graduation message here...',
-      namePlaceholder: 'Their name',
-      heroTitle: 'Surprise Card Maker',
-      heroSubtitle: 'Honor their achievement with a joyful surprise card.',
-      greeting: (name) => `Congratulations Graduate, ${name}!`,
-      badgeText: () => null,
-      lockTitle: "This surprise isn't ready yet!",
-      lockMessage: (dateFormatted) => `The graduation surprise isn't ready yet. Come back on ${dateFormatted}.`,
-      previewGreeting: (name) => (name ? `Congratulations Graduate, ${name}!` : 'Congratulations Graduate!'),
-      modalHint: 'the graduation date',
-      dateHint: 'Recipients will see a countdown until the graduation date.'
-    }
-  };
-
-  return occasions[key] || occasions.birthday;
-}
-
+// ── Age Calculator ─────────────────────────────────────
 export function calcAge(dateStr) {
   const birth = new Date(dateStr);
   const today = new Date();
@@ -179,4 +54,118 @@ export function calcAge(dateStr) {
     age--;
   }
   return age;
+}
+
+// ── Occasion Configuration ─────────────────────────────
+// Returns an object with all the labels/text needed for a given occasion.
+// Property names match what CreatorMode.jsx and ReceiverMode.jsx expect.
+export function getOccasionMeta(occasionId) {
+  const configs = {
+    birthday: {
+      emoji: '🎂',
+      heroTitle: 'Birthday Surprise Maker',
+      heroSubtitle: "Put together a beautiful, custom birthday greeting. They won't be able to open it until the big day!",
+      nameLabel: "Birthday Person's Name",
+      namePlaceholder: 'Their name',
+      dateLabel: 'Birthday Date',
+      dateHint: 'The card will stay sealed until this date!',
+      messageLabel: 'Write Your Birthday Message',
+      messagePlaceholder: 'Type your heartfelt birthday message here...',
+      // Receiver-side
+      greeting: (name) => `Happy Birthday, ${name}!`,
+      badgeText: (age) => `${age} years young!`,
+      lockTitle: "This surprise isn't ready yet!",
+      lockMessage: (dateFormatted) => `It's not your birthday yet! Come back on ${dateFormatted}.`,
+      // Preview + modal
+      previewGreeting: (name) => name ? `Happy Birthday, ${name}!` : 'Happy Birthday!',
+      modalHint: 'their birthday',
+    },
+    congratulations: {
+      emoji: '🎉',
+      heroTitle: 'Congratulations Card Maker',
+      heroSubtitle: 'Create a stunning congratulations card to celebrate their big moment!',
+      nameLabel: "Recipient's Name",
+      namePlaceholder: 'Their name',
+      dateLabel: 'Special Date',
+      dateHint: 'The card will stay sealed until this date!',
+      messageLabel: 'Write Your Congratulations Message',
+      messagePlaceholder: 'Write a wonderful congratulations message...',
+      greeting: (name) => `Congratulations, ${name}!`,
+      badgeText: () => '🎉 Amazing Achievement!',
+      lockTitle: "This surprise isn't ready yet!",
+      lockMessage: (dateFormatted) => `Come back on ${dateFormatted} to see your surprise!`,
+      previewGreeting: (name) => name ? `Congratulations, ${name}!` : 'Congratulations!',
+      modalHint: 'the special date',
+    },
+    'job-promotion': {
+      emoji: '💼',
+      heroTitle: 'Promotion Celebration Maker',
+      heroSubtitle: 'Celebrate their big career move with a personalized surprise card!',
+      nameLabel: "Their Name",
+      namePlaceholder: 'Their name',
+      dateLabel: 'Celebration Date',
+      dateHint: 'The card will stay sealed until this date!',
+      messageLabel: 'Write Your Promotion Message',
+      messagePlaceholder: 'Congratulate them on their promotion...',
+      greeting: (name) => `You Got Promoted, ${name}!`,
+      badgeText: () => '💼 Moving Up!',
+      lockTitle: "This surprise isn't ready yet!",
+      lockMessage: (dateFormatted) => `Come back on ${dateFormatted} to see your surprise!`,
+      previewGreeting: (name) => name ? `You Got Promoted, ${name}!` : 'Promotion Time!',
+      modalHint: 'the celebration date',
+    },
+    'youre-hired': {
+      emoji: '🎊',
+      heroTitle: "You're Hired Card Maker",
+      heroSubtitle: 'Welcome the new team member with a fun, personalized card!',
+      nameLabel: "New Hire's Name",
+      namePlaceholder: 'Their name',
+      dateLabel: 'Start Date',
+      dateHint: 'The card will stay sealed until their start date!',
+      messageLabel: 'Write Your Welcome Message',
+      messagePlaceholder: 'Welcome them to the team...',
+      greeting: (name) => `Welcome Aboard, ${name}!`,
+      badgeText: () => '🎊 New Beginnings!',
+      lockTitle: "This surprise isn't ready yet!",
+      lockMessage: (dateFormatted) => `Come back on ${dateFormatted} to see your surprise!`,
+      previewGreeting: (name) => name ? `Welcome Aboard, ${name}!` : 'Welcome Aboard!',
+      modalHint: 'their start date',
+    },
+    anniversary: {
+      emoji: '💝',
+      heroTitle: 'Anniversary Card Maker',
+      heroSubtitle: 'Create a heartfelt anniversary surprise for your special someone!',
+      nameLabel: "Their Name",
+      namePlaceholder: "Partner's name or couple's names",
+      dateLabel: 'Anniversary Date',
+      dateHint: 'The card will stay sealed until your anniversary!',
+      messageLabel: 'Write Your Anniversary Message',
+      messagePlaceholder: 'Express your love and appreciation...',
+      greeting: (name) => `Happy Anniversary, ${name}!`,
+      badgeText: () => '💝 With All My Love',
+      lockTitle: "This surprise isn't ready yet!",
+      lockMessage: (dateFormatted) => `Come back on ${dateFormatted} to see your surprise!`,
+      previewGreeting: (name) => name ? `Happy Anniversary, ${name}!` : 'Happy Anniversary!',
+      modalHint: 'the anniversary',
+    },
+    graduation: {
+      emoji: '🎓',
+      heroTitle: 'Graduation Card Maker',
+      heroSubtitle: 'Celebrate their graduation with a personalized surprise card!',
+      nameLabel: "Graduate's Name",
+      namePlaceholder: 'Their name',
+      dateLabel: 'Graduation Date',
+      dateHint: 'The card will stay sealed until graduation day!',
+      messageLabel: 'Write Your Graduation Message',
+      messagePlaceholder: 'Congratulate the graduate...',
+      greeting: (name) => `Congratulations Graduate, ${name}!`,
+      badgeText: () => '🎓 Class of ' + new Date().getFullYear(),
+      lockTitle: "This surprise isn't ready yet!",
+      lockMessage: (dateFormatted) => `Come back on ${dateFormatted} to see your surprise!`,
+      previewGreeting: (name) => name ? `Congratulations, ${name}!` : 'Congratulations!',
+      modalHint: 'graduation day',
+    },
+  };
+
+  return configs[occasionId] || configs.birthday;
 }

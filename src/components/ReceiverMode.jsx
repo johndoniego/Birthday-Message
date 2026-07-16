@@ -347,16 +347,17 @@ export default function ReceiverMode({ data }) {
   return (
     <>
       {/* Background Audio */}
-      {audioUrl && (audioIsYoutube ? (
+      {audioUrl && !audioIsYoutube && (
+        <audio ref={audioRef} src={audioUrl} loop />
+      )}
+      {audioUrl && audioIsYoutube && isRevealed && (
         <iframe
           title="background-audio"
-          src={`https://www.youtube.com/embed/${getYouTubeId(audioUrl)}?autoplay=1&mute=1&loop=1&playlist=${getYouTubeId(audioUrl)}`}
+          src={`https://www.youtube.com/embed/${getYouTubeId(audioUrl)}?autoplay=1&loop=1&playlist=${getYouTubeId(audioUrl)}`}
           allow="autoplay"
-          style={{ display: 'none', border: 'none' }}
+          style={{ position: 'fixed', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none', border: 'none' }}
         />
-      ) : (
-        <audio ref={audioRef} src={audioUrl} loop />
-      ))}
+      )}
 
       {/* Particle Canvas Effect when card is fully revealed */}
       <ParticleCanvas type={animation || 'confetti'} active={isRevealed} />
